@@ -25,3 +25,11 @@ Conversation& Conversation::operator=(const Conversation& other) {
     }
     return *this;
 }
+Conversation::Conversation(Conversation&& other) noexcept {
+    data_ = other.data_;
+    size_ = other.size_;
+    capacity_ = other.capacity_;
+    other.data_ = nullptr;
+    other.size_ = 0;
+    other.capacity_ = 0;
+}
