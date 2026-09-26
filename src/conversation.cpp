@@ -1,4 +1,5 @@
 #include "conversation.h"
+#include <cassert>
 Conversation::Conversation() : data_(nullptr), size_(0), capacity_(0) {
 }
 Conversation::~Conversation() {
@@ -73,4 +74,8 @@ void Conversation::append(Message m) {
 }
 std::size_t Conversation::size() const noexcept {
     return size_;
+}
+const Message& Conversation::at(std::size_t i) const{
+    assert(i < size_);
+    return data_[i];
 }
