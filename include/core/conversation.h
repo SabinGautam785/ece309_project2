@@ -12,10 +12,7 @@ class Conversation {
     Conversation& operator = (Conversation&& other) noexcept;
     void append(Message m);
     std::size_t size() const noexcept;
-    Message& at(std::size_t index);
     const Message& at(std::size_t index) const;
-    Message* begin() noexcept;
-    Message* end() noexcept;
     const Message* begin() const noexcept;
     const Message* end() const noexcept;
     private:

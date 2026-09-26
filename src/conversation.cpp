@@ -1,5 +1,8 @@
-#include "conversation.h"
+#include "core/conversation.h"
+#include "core/message.h"
 #include <cassert>
+//#include "core/sentinel_scanner.h"
+
 Conversation::Conversation() : data_(nullptr), size_(0), capacity_(0) {
 }
 Conversation::~Conversation() {
@@ -78,4 +81,10 @@ std::size_t Conversation::size() const noexcept {
 const Message& Conversation::at(std::size_t i) const{
     assert(i < size_);
     return data_[i];
+}
+const Message* Conversation::begin() const noexcept {
+    return data_;
+}
+const Message* Conversation::end() const noexcept {
+    return data_ + size_;
 }
