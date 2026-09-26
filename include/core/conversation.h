@@ -10,7 +10,7 @@ class Conversation {
     Conversation& operator = (const Conversation& other);
     Conversation(Conversation&& other) noexcept;
     Conversation& operator = (Conversation&& other) noexcept;
-    void append(const Message& message);
+    void append(Message m);
     std::size_t size() const noexcept;
     Message& at(std::size_t index);
     const Message& at(std::size_t index) const;

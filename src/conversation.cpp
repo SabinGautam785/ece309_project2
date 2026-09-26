@@ -33,3 +33,44 @@ Conversation::Conversation(Conversation&& other) noexcept {
     other.size_ = 0;
     other.capacity_ = 0;
 }
+Conversation& Conversation::operator=(Conversation&& other) noexcept {
+    if (this == &other) {
+        return *this;
+    }
+    delete[] data_;
+    size_ = other.size_;
+    capacity_ = other.capacity_;
+    data_ = other.data_;
+    other.data_ = nullptr;
+    other.size_ = 0;
+    other.capacity_ = 0;
+    return *this;
+}
+void Conversation::append(Message m) {
+    if (size_ < capacity_) {
+        data_[size_] = m;
+        size_++;
+    }
+    else {
+        std::size_t new_capacity;
+        if (capacity_ == 0) {
+            new_capacity = 1;
+        }
+        else {
+            new_capacity = 2 * capacity_;
+        }
+        Message* new_data;
+        new_data = new Message[new_capacity];
+        for (std::size_t k = 0; k < size_; k++) {
+            new_data[k] = data_[k];
+        }
+        delete[] data_;
+        data_ = new_data;
+        capacity_ = new_capacity;
+        data_[size_] = m;
+        size_++;
+    }
+}
+std::size_t Conversation::size() const noexcept {
+    return size_;
+}
