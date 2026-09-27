@@ -9,7 +9,7 @@
 
 #include "core/conversation.h"
 #include "core/message.h"
-//#include "core/sentinel_scanner.h"
+#include "core/sentinel_scanner.h"
 //#include "harness/harness.h"
 //#include "model/replay_client.h"
 //#include "model/scripted_client.h"
@@ -64,5 +64,43 @@ int main() {
     //end() test
     const Message* last = conversation.end();
     assert((last - first) == 2);
+    //Sentinel Scanner test
+    SentinelScanner scanner("<|end_conversation|>");
+    SentinelScanner::Out out = scanner.feed("Hello World");
+    assert(out.sentinel_found == false);
+    SentinelScanner::Out flushed = scanner.flush();
+    assert(out.safe_text + flushed.safe_text == "Hello World");
+    SentinelScanner scanner2("<|end_conversation|>");
+    SentinelScanner::Out out2 = scanner2.feed("GoodBye<|end_conversation|>");
+    assert(out2.safe_text == "GoodBye");
+    assert(out2.sentinel_found == true);
+    SentinelScanner scanner3("<|end_conversation|>");
+    SentinelScanner::Out part1 = scanner3.feed("GoodBye<|end_");
+    assert(part1.sentinel_found == false);
+    SentinelScanner::Out part2 = scanner3.feed("conversation|>");
+    assert(part2.sentinel_found == true);
+    assert(part1.safe_text + part2.safe_text == "GoodBye");
+    SentinelScanner scanner4("<|end_conversation|>");
+    SentinelScanner::Out falseMatch = scanner4.feed("Hello <|end_NOT_A_SENTINEL");
+    assert(falseMatch.sentinel_found == false);
+    SentinelScanner::Out falseflushed = scanner4.flush();
+    assert(falseMatch.safe_text + falseflushed.safe_text == "Hello <|end_NOT_A_SENTINEL");
+    SentinelScanner scanner5("<|end_conversation|>");
+    std::string sentinelText = "<|end_conversation|>";
+    bool found = false;
+    for (char c : sentinelText) {
+        std::string oneChar(1, c);
+        SentinelScanner::Out charResult = scanner5.feed(oneChar);
+        if (charResult.sentinel_found) {
+            found = true;
+        }
+    }
+    assert(found == true);
+    SentinelScanner scanner6("<|end_conversation|>");
+    std::string longText(100, 'A');
+    SentinelScanner::Out longResult = scanner6.feed(longText);
+    std::size_t maxPending = sentinelText.size() - 1;
+    assert(longResult.safe_text.size() >= longText.size() - maxPending);
     return 0;
 }
+
