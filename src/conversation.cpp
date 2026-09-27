@@ -1,7 +1,8 @@
 #include "core/conversation.h"
 #include "core/message.h"
 #include <cassert>
-//#include "core/sentinel_scanner.h"
+#include "core/sentinel_scanner.h"
+#include <stdexcept>
 
 Conversation::Conversation() : data_(nullptr), size_(0), capacity_(0) {
 }
@@ -79,7 +80,9 @@ std::size_t Conversation::size() const noexcept {
     return size_;
 }
 const Message& Conversation::at(std::size_t i) const{
-    assert(i < size_);
+    if (i >= size_) {
+        throw std::out_of_range("Index out of range");
+    }
     return data_[i];
 }
 const Message* Conversation::begin() const noexcept {
